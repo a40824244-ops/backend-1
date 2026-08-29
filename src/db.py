@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # MongoDB Connection Configuration
-DEFAULT_URI = "mongodb+srv://<db_username>:E9sCrYIZu87CwmEq@cluster0.pqavtcq.mongodb.net/student_db?retryWrites=true&w=majority"
+DEFAULT_URI = "mongodb+srv://ameerhamza031946_db_user:E9sCrYIZu87CwmEq@cluster0.pqavtcq.mongodb.net/student_db?retryWrites=true&w=majority"
 MONGODB_URI = os.getenv("MONGODB_URI", DEFAULT_URI)
 
 _client = None
@@ -29,10 +29,10 @@ def get_db_client():
         # Verify connection
         _client.admin.command('ping')
         _db = _client.get_database("student_db")
-        print("✅ Successfully connected to MongoDB Atlas!")
+        print("[SUCCESS] Successfully connected to MongoDB Atlas!")
         return _db
     except Exception as e:
-        print(f"⚠️ MongoDB connection notice: {e}")
+        print(f"[NOTICE] MongoDB connection notice: {e}")
         return None
 
 def check_db_status() -> Tuple[bool, str]:
