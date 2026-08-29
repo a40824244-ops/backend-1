@@ -16,23 +16,30 @@ def get_db_client():
     """Initializes and returns the PyMongo client and database object."""
     global _client, _db
     if _db is not None:
-        return _db
+        try:
+            _client.admin.command('ping')
+            return _db
+        except Exception:
+            _db = None
+            _client = None
     
     try:
         import pymongo
+        load_dotenv(override=True)
         uri = os.getenv("MONGODB_URI", DEFAULT_URI)
-        # Avoid connecting if default placeholder username is unchanged
-        if "<db_username>" in uri:
+        
+        if not uri or "<db_username>" in uri:
             return None
             
-        _client = pymongo.MongoClient(uri, serverSelectionTimeoutMS=3000)
-        # Verify connection
+        _client = pymongo.MongoClient(uri, serverSelectionTimeoutMS=5000, connectTimeoutMS=5000)
         _client.admin.command('ping')
         _db = _client.get_database("student_db")
         print("[SUCCESS] Successfully connected to MongoDB Atlas!")
         return _db
     except Exception as e:
         print(f"[NOTICE] MongoDB connection notice: {e}")
+        _db = None
+        _client = None
         return None
 
 def check_db_status() -> Tuple[bool, str]:
@@ -43,9 +50,9 @@ def check_db_status() -> Tuple[bool, str]:
             return True, "Connected to MongoDB Atlas"
         else:
             uri = os.getenv("MONGODB_URI", DEFAULT_URI)
-            if "<db_username>" in uri:
-                return False, "Please update <db_username> in .env with your MongoDB Atlas username"
-            return False, "Disconnected"
+            if not uri or "<db_username>" in uri:
+                return False, "Please update <db_username> in .env with your MongoDB username"
+            return False, "Disconnected (check network or Atlas IP access)"
     except Exception as e:
         return False, str(e)
 
