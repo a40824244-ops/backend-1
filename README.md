@@ -1,22 +1,16 @@
-# 🎓 Student Performance Prediction System - Backend API Service
+# 🎓 Student Performance Prediction System - Streamlit Interactive Frontend
 
-A high-performance Machine Learning and PyTorch Deep Learning backend service for predicting student performance, assessing academic risk, providing SHAP explainability, and serving REST predictions via FastAPI.
+An interactive, glassmorphic Streamlit Dashboard for predicting student performance, assessing academic risk, computing SHAP explainability, benchmark comparisons, and processing bulk student records.
 
 ---
 
 ## 🌟 Key Features
 
-1. **Synthetic Data Generator & Preprocessing Pipeline**: Standardizes schema, validates boundaries, handles missing values, label encodes categoricals, scales numerical features.
-2. **Feature Engineering**: Interaction terms (`Attendance x Study Hours`), coursework averages, score improvement metrics.
-3. **ML & PyTorch Deep Learning Engine**:
-   - Classification & Regression: Logistic Regression, Random Forest, XGBoost / Gradient Boosting, PyTorch Multi-Layer Perceptron (Neural Network with Dropout & Early Stopping).
-   - Metrics: Accuracy, Precision, Recall, F1 Score, ROC-AUC, MAE, MSE, RMSE, R² Score.
-4. **FastAPI REST API Microservice**:
-   - `POST /predict`: Single student performance prediction & risk assessment.
-   - `POST /predict/batch`: Bulk student file processing.
-   - `GET /metrics`: Model evaluation summary & feature importances.
-   - `POST /retrain`: Automated model retraining trigger.
-5. **Containerized Production**: Complete Docker & Docker Compose configuration.
+1. **Executive Dashboard**: KPIs, attendance vs score distributions, and risk classification charts.
+2. **Real-Time Student Predictor**: Interactive input form for predicting pass probability, letter grades, final scores, and recommended interventions.
+3. **Bulk Batch File Processing**: Upload CSV or Excel (`.xlsx`, `.xls`) files for batch risk assessment, automated column normalization, and CSV report export.
+4. **Model Benchmark**: Comparison between Logistic Regression, Random Forest, XGBoost, and PyTorch Deep Learning Neural Networks.
+5. **Model Explainability**: SHAP breakdown and top feature importance visualization.
 
 ---
 
@@ -27,26 +21,8 @@ A high-performance Machine Learning and PyTorch Deep Learning backend service fo
 pip install -r requirements.txt
 ```
 
-### 2. Run Data Pipeline & Train Models
+### 2. Launch Streamlit Dashboard
 ```bash
-python -m src.data_generator
-python -m src.train_ml
-python -m src.train_dl
+streamlit run app.py
 ```
-
-### 3. Launch FastAPI REST Server
-```bash
-uvicorn src.api.main:app --reload --port 8000
-```
-FastAPI interactive docs will be available at: `http://localhost:8000/docs`.
-
-### 4. Run Automated Tests
-```bash
-pytest tests/
-```
-
-### 5. Docker Deployment
-```bash
-docker-compose -f docker/docker-compose.yml up --build
-```
-
+The application will open automatically in your web browser at `http://localhost:8501`.
