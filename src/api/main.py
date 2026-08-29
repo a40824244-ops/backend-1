@@ -126,6 +126,25 @@ def predict_single_student(student_dict: Dict[str, Any], cls_model, reg_model, p
     )
 
 
+@app.get("/", tags=["Root"])
+def root():
+    db_ok, db_msg = check_db_status()
+    return {
+        "message": "Welcome to Student Performance Prediction System API",
+        "status": "online",
+        "database": "connected" if db_ok else db_msg,
+        "docs_url": "/docs",
+        "redoc_url": "/redoc",
+        "health_check": "/health",
+        "available_endpoints": {
+            "POST /predict": "Predict single student performance & risk",
+            "POST /predict/batch": "Bulk student dataset predictions",
+            "GET /metrics": "Model evaluation & feature importance",
+            "POST /retrain": "Trigger automated model retraining"
+        }
+    }
+
+
 @app.get("/health", tags=["Health"])
 def health_check():
     cls_model, reg_model, preprocessor = load_artifacts()
