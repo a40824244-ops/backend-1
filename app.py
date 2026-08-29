@@ -16,6 +16,8 @@ from src.feature_engineering import add_engineered_features
 from src.train_ml import train_ml_models, FEATURE_COLUMNS
 from src.train_dl import train_dl_model
 from src.explainability import get_feature_importances, compute_student_shap_breakdown
+from src.db import check_db_status, save_single_prediction, save_batch_predictions
+
 
 MODELS_DIR = "models/saved_models"
 
@@ -142,6 +144,13 @@ def main():
     
     st.sidebar.markdown("---")
     st.sidebar.info("💡 **System Status**: Models operational & loaded successfully.")
+    
+    db_ok, db_msg = check_db_status()
+    if db_ok:
+        st.sidebar.success("🍃 **MongoDB Atlas**: Connected")
+    else:
+        st.sidebar.warning(f"🍃 **MongoDB Atlas**: {db_msg}")
+
 
     # --- VIEW 1: DASHBOARD & OVERVIEW ---
     if menu_option == "📊 Dashboard & Overview":
@@ -306,6 +315,13 @@ def main():
                 </div>
                 """, unsafe_allow_html=True)
                 
+            save_single_prediction(student_dict, {
+                "pass_probability": round(prob, 4),
+                "predicted_final_score": pred_score,
+                "grade": grade,
+                "risk_level": risk_level
+            })
+            
             st.markdown("<br>", unsafe_allow_html=True)
             st.write("##### 💡 Recommended Interventions")
             if risk_level == "High Risk":
@@ -355,6 +371,8 @@ def main():
                             return "Low"
                             
                     df_clean["Risk_Level"] = df_clean.apply(calc_risk, axis=1)
+                    
+                    save_batch_predictions(df_clean.to_dict(orient="records"))
                     
                     st.success(f"✅ Batch Processing Complete for {len(df_clean)} records!")
                     st.dataframe(df_clean, use_container_width=True)
